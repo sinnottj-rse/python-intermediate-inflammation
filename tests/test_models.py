@@ -1,31 +1,43 @@
 """Tests for statistics functions within the Model layer."""
 
+import pytest
 import numpy as np
 import numpy.testing as npt
 
-from inflammation.models import daily_mean
+from inflammation.models import daily_mean, daily_min, daily_max
 
-def test_daily_mean_zeros():
-    """Test that mean function works for an array of zeros."""
-    
+@pytest.mark.parametrize(
+    "test, expected",
+    [
+        ([ [0, 0], [0, 0], [0, 0] ], [0, 0]),
+        ([ [1, 2], [3, 4], [5, 6] ], [3, 4]),
+    ])
+def test_daily_mean(test, expected):
+    """Test mean function works for array of zeroes and positive integers."""
+    npt.assert_array_equal(daily_mean(np.array(test)), np.array(expected))
 
-    test_input = np.array([[0, 0],
-                           [0, 0],
-                           [0, 0]])
-    test_result = np.array([0, 0])
+@pytest.mark.parametrize(
+    "test, expected",
+    [
+        ([ [0, 0], [0, 0], [0, 0] ], [0, 0]),
+        ([ [1, 2], [3, 4], [5, 6] ], [1, 2]),
+    ])
+def test_daily_min(test, expected):
+    """Test mean function works for array of zeroes and positive integers."""
+    npt.assert_array_equal(daily_min(np.array(test)), np.array(expected))
 
-    # Need to use Numpy testing functions to compare arrays
-    npt.assert_array_equal(daily_mean(test_input), test_result)
+@pytest.mark.parametrize(
+    "test, expected",
+    [
+        ([ [0, 0], [0, 0], [0, 0] ], [0, 0]),
+        ([ [1, 2], [3, 4], [5, 6] ], [5, 6]),
+    ])
+def test_daily_max(test, expected):
+    """Test mean function works for array of zeroes and positive integers."""
+    npt.assert_array_equal(daily_max(np.array(test)), np.array(expected))
 
+def test_daily_min_string():
+    """Test for TypeError when passing strings"""
 
-def test_daily_mean_integers():
-    """Test that mean function works for an array of positive integers."""
-
-    test_input = np.array([[1, 2],
-                           [3, 4],
-                           [5, 6]])
-    test_result = np.array([3, 4])
-
-    # Need to use Numpy testing functions to compare arrays
-    npt.assert_array_equal(daily_mean(test_input), test_result)
-
+    with pytest.raises(TypeError):
+        _ = daily_min([['Hello', 'there'], ['General', 'Kenobi']])
